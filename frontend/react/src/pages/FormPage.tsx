@@ -9,7 +9,8 @@ import NavigateToSelection from "../features/offer-letter/components/NavigateToS
 
 const BONUS_FIELDS = [
   { key: "joining_bonus", label: "Joining Bonus" },
-  { key: "retention_bonus", label: "Retention Bonus" },
+  { key: "retention bonus 6 months", label: "Retention Bonus - 6 Months" },
+  { key: "retention bonus 12 months", label: "Retention Bonus - 12 Months" },
   { key: "one_time_bonus", label: "One Time Bonus" },
   { key: "variable_pay", label: "Variable Pay" },
   { key: "notice_period_buyout", label: "Notice Period Buy Out" },
@@ -35,6 +36,10 @@ const FormPage: React.FC = () => {
     reporting_manager: "",
     proposed_ctc: "",
     joining_bonus: "",
+
+    "retention bonus 6 months": "",
+    "retention bonus 12 months": "",
+
     retention_bonus: "",
     one_time_bonus: "",
     variable_pay: "",
@@ -56,7 +61,10 @@ const FormPage: React.FC = () => {
       "proposed_ctc",
       "revised_ctc",
       "joining_bonus",
-      "retention_bonus",
+
+      "retention bonus 6 months",
+      "retention bonus 12 months",
+
       "one_time_bonus",
       "variable_pay",
       "notice_period_buyout",

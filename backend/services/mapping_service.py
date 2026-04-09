@@ -5,6 +5,7 @@ from utils.number_to_words import convert_to_words_indian
 BONUS_FIELDS = [
     "Joining_Bonus",
     "One_Time_Bonus",
+    "Retention_Bonus",
     "Variable_Pay",
     "Notice_Period_Buyout",
     "Relocation",
@@ -112,15 +113,21 @@ def map_record(record: dict):
                 raw_value = str(raw_value)
 
         mapped[template_key] = str(raw_value).strip() if raw_value else ""
-
+ 
     # =========================================================
-    #  MULTIPLE RETENTION BONUS
+    # MULTIPLE RETENTION BONUS (WORKS FOR EXCEL + FORM)
     # =========================================================
     retention_list = []
-
-    # 6 Months
-    bonus_6 = normalized_record.get("retention bonus 6 months", None)
-    if bonus_6 not in ["", None, 0, "0"]:
+ 
+    print("DEBUG INPUT:", normalized_record)
+ 
+    # 6 Months (support both formats)
+    bonus_6 = (
+        normalized_record.get("retention bonus 6 months") or
+        normalized_record.get("retention_bonus_6")
+    )
+ 
+    if bonus_6 and str(bonus_6).strip() not in ["", "0"]:
         try:
             formatted, words = convert_to_words_indian(bonus_6)
             retention_list.append({
@@ -130,10 +137,14 @@ def map_record(record: dict):
             })
         except Exception as e:
             print("Retention 6 ERROR:", e)
-
-    # 12 Months
-    bonus_12 = normalized_record.get("retention bonus 12 months", None)
-    if bonus_12 not in ["", None, 0, "0"]:
+ 
+    # 12 Months (support both formats)
+    bonus_12 = (
+        normalized_record.get("retention bonus 12 months") or
+        normalized_record.get("retention_bonus_12")
+    )
+ 
+    if bonus_12 and str(bonus_12).strip() not in ["", "0"]:
         try:
             formatted, words = convert_to_words_indian(bonus_12)
             retention_list.append({
@@ -143,8 +154,9 @@ def map_record(record: dict):
             })
         except Exception as e:
             print("Retention 12 ERROR:", e)
-
+ 
     mapped["Retention_Bonuses"] = retention_list
+ 
 
     print("MAPPED DATA:", mapped)
 
