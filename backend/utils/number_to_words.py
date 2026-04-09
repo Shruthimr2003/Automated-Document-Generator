@@ -19,18 +19,18 @@ def format_indian_number(num):
 
 def convert_to_words_indian(number):
     try:
-        # ✅ Clean input (handles "10,00,000")
+        #  Clean input (handles "10,00,000")
         clean_value = str(number).replace(",", "").strip()
         num = int(float(clean_value))
 
-        # ✅ Format number (Indian format)
+        # Format number (Indian format)
         formatted_number = format_indian_number(num)
 
-        # ✅ Convert to words
+        #  Convert to words
         words = num2words(num, lang='en_IN')
         words = words.replace(",", "").strip()
 
-        # ✅ Fix plural
+        # Fix plural
         words = words.replace("lakh", "lakhs").replace("crore", "crores")
 
         words = "Rupees " + words.title() + " Only"

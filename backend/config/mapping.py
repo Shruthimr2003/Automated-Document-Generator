@@ -2,6 +2,7 @@
 FIELD_MAPPING = {
     "Candidate_Name": "candidate name",
     "Address":"address",
+    "DocNo" :"Document Number",
     "DOJ": "doj",
     "Joining_Location": "joining location",
     "Proposed_Designation": "proposed designation",
