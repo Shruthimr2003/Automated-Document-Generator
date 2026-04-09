@@ -23,8 +23,7 @@ const FormPage: React.FC = () => {
   const { status, error, generateFromForm } = useOfferLetter();
   const isLoading = status === "loading";
 
-  const isNumeric = (value: string) => /^[0-9]*$/.test(value);
-  const isText = (value: string) => /^[a-zA-Z\s]*$/.test(value);
+  const [rawDate, setRawDate] = useState("");
 
   const [formData, setFormData] = useState({
     candidate_name: "",
@@ -61,15 +60,12 @@ const FormPage: React.FC = () => {
       "proposed_ctc",
       "revised_ctc",
       "joining_bonus",
-
       "retention bonus 6 months",
       "retention bonus 12 months",
-
       "one_time_bonus",
       "variable_pay",
       "notice_period_buyout",
       "relocation",
-      "doc_no"
     ];
 
     const textFields = [
@@ -79,17 +75,32 @@ const FormPage: React.FC = () => {
       "reporting_manager",
       "relocation_from",
       "relocation_to",
-      "address"
     ];
 
     let errorMsg = "";
+    let finalValue = value;
 
-    if (numericFields.includes(name) && !isNumeric(value)) {
+    if (name === "doc_no" && !/^[0-9]*$/.test(value)) {
       errorMsg = "Only numbers allowed";
     }
+    // ================= NUMERIC =================
+    if (numericFields.includes(name)) {
+      const cleaned = value.replace(/,/g, "");
 
-    if (textFields.includes(name) && !isText(value)) {
-      errorMsg = "Only alphabets allowed";
+      if (!/^[0-9]*$/.test(cleaned)) {
+        errorMsg = "Only numbers allowed";
+      } else {
+        finalValue = cleaned
+          ? Number(cleaned).toLocaleString("en-IN")
+          : "";
+      }
+    }
+
+    // ================= TEXT =================
+    if (textFields.includes(name)) {
+      if (!/^[a-zA-Z\s]*$/.test(value)) {
+        errorMsg = "Only alphabets allowed";
+      }
     }
 
     setErrors((prev) => ({
@@ -99,7 +110,7 @@ const FormPage: React.FC = () => {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: finalValue,
     }));
   };
 
@@ -169,7 +180,6 @@ const FormPage: React.FC = () => {
           <div
             key={item.key}
             className={`sidebar-item ${selected[item.key] ? "active" : ""}`}
-            onClick={() => toggleOption(item.key)}
           >
             <input
               type="checkbox"
@@ -190,6 +200,7 @@ const FormPage: React.FC = () => {
           {/* Name */}
           <input
             name="candidate_name"
+            value={formData.candidate_name}
             placeholder="Enter Full Name"
             onChange={handleChange}
             className={`input ${errors.candidate_name ? "error" : ""}`}
@@ -199,26 +210,46 @@ const FormPage: React.FC = () => {
           {/* Document Number */}
           <input
             name="doc_no"
-            placeholder="Enter Document Number"
             value={formData.doc_no}
+            placeholder="Enter Document Number"
             onChange={handleChange}
             className={`input ${errors.doc_no ? "error" : ""}`}
           />
           {errors.doc_no && <p className="error-text">{errors.doc_no}</p>}
           <input
-            type="text"
+            type={rawDate ? "date" : "text"}
             name="doj"
             placeholder="Date of Joining"
-            onFocus={(e) => (e.target.type = "date")}
-            onBlur={(e) => {
-              if (!e.target.value) e.target.type = "text";
+            value={rawDate}
+            min={new Date().toISOString().split("T")[0]}
+            onFocus={(e) => {
+              e.target.type = "date";
             }}
-            onChange={handleChange}
+            onBlur={(e) => {
+              if (!rawDate) {
+                e.target.type = "text";
+              }
+            }}
+            onChange={(e) => {
+              const value = e.target.value;
+              setRawDate(value);
+
+              if (value) {
+                const [year, month, day] = value.split("-");
+                const formatted = `${day}-${month}-${year}`;
+
+                setFormData((prev) => ({
+                  ...prev,
+                  doj: formatted,
+                }));
+              }
+            }}
           />
 
           {/* Location */}
           <input
             name="joining_location"
+            value={formData.joining_location}
             placeholder="Location"
             onChange={handleChange}
             className={`input ${errors.joining_location ? "error" : ""}`}
@@ -226,6 +257,7 @@ const FormPage: React.FC = () => {
           {errors.joining_location && <p className="error-text">{errors.joining_location}</p>}
           <input
             name="address"
+            value={formData.address}
             placeholder="Address"
             onChange={handleChange}
             className={`input ${errors.address ? "error" : ""}`}
@@ -235,6 +267,7 @@ const FormPage: React.FC = () => {
           {/* Designation */}
           <input
             name="proposed_designation"
+            value={formData.proposed_designation}
             placeholder="Proposed Designation"
             onChange={handleChange}
             className={`input ${errors.proposed_designation ? "error" : ""}`}
@@ -244,6 +277,7 @@ const FormPage: React.FC = () => {
           {/* Manager */}
           <input
             name="reporting_manager"
+            value={formData.reporting_manager}
             placeholder="Reporting Manager"
             onChange={handleChange}
             className={`input ${errors.reporting_manager ? "error" : ""}`}
@@ -253,6 +287,7 @@ const FormPage: React.FC = () => {
           {/* CTC */}
           <input
             name="proposed_ctc"
+            value={formData.proposed_ctc}
             placeholder="Proposed CTC"
             onChange={handleChange}
             className={`input ${errors.proposed_ctc ? "error" : ""}`}
@@ -267,6 +302,7 @@ const FormPage: React.FC = () => {
 
               <input
                 name={field.key}
+                value={formData[field.key as keyof typeof formData] || ""}
                 placeholder={`Enter ${field.label}`}
                 onChange={handleChange}
                 className={`input ${errors[field.key] ? "error" : ""}`}
