@@ -12,7 +12,6 @@ BONUS_FIELDS = [
     "Revised_CTC",
 ]
 
-
 def map_record(record: dict):
     mapped = {}
 

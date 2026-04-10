@@ -81,7 +81,6 @@ def generate(file_id: str):
         "results": docx_records
     } 
 
-from fastapi import Body
 
 @app.post("/generate-from-form")
 def generate_from_form(payload: dict = Body(...)):
