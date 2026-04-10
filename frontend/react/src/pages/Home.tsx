@@ -48,7 +48,7 @@ const Home: React.FC = () => {
           <FileUpload label="Salary Details" onFileSelect={setSalaryFile} loading={isLoading} />
         </div> */}
 
-        <div className="section">
+        {/* <div className="section">
           <label className="file-label ">Document Number</label>
           <input
             type="text"
@@ -57,13 +57,13 @@ const Home: React.FC = () => {
             placeholder="e.g. 1232"
             className="text-input"
           />
-        </div>
+        </div> */}
 
         <div className="section">
           <GenerateButton
             onGenerate={handleGenerate}
             loading={isLoading}
-            disabled={!file || !docNo}
+            disabled={!file}
           />
         </div>
 

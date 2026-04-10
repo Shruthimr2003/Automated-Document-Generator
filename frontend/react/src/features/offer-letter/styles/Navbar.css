@@ -36,6 +36,31 @@
 }
 
 /* Right (empty for balance) */
+
 .nav-right {
-  flex: 1;
+   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.username {
+  font-weight: bold;
+  color: white;
+  font-size: 16px;
+}
+
+.logout-btn {
+  padding: 8px 15px;
+  background: rgb(212, 11, 11);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background: rgb(216, 144, 144);
 }

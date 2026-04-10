@@ -12,7 +12,7 @@ def transform_form_to_mapping_keys(record):
     }
 
 
-def generate_docx(data, template_path, doc_no):
+def generate_docx(data, template_path, doc_no=None):
     generated = []
 
     for record in data:
@@ -23,7 +23,7 @@ def generate_docx(data, template_path, doc_no):
 
         mapped_data = map_record(record)
 
-        mapped_data["DocNo"] = doc_no
+        mapped_data["DocNo"] = doc_no or mapped_data.get("DocNo") or "DOC001"
         mapped_data["Year"] = datetime.now().year
 
         print("👉 MAPPED:", mapped_data)

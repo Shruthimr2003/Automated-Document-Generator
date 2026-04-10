@@ -39,6 +39,7 @@ export const useOfferLetter = () => {
   }, []);
 
   const generateOfferLetters = useCallback(async () => {
+
     if (!state.file) {
       setState((prev) => ({
         ...prev,
@@ -47,13 +48,13 @@ export const useOfferLetter = () => {
       return;
     }
 
-    if (!state.docNo.trim()) {
-      setState((prev) => ({
-        ...prev,
-        error: "Please enter Document Number",
-      }));
-      return;
-    }
+    // if (!state.docNo.trim()) {
+    //   setState((prev) => ({
+    //     ...prev,
+    //     error: "Please enter Document Number",
+    //   }));
+    //   return;
+    // }
 
     setState((prev) => ({
       ...prev,
@@ -64,21 +65,40 @@ export const useOfferLetter = () => {
     try {
       const formData = new FormData();
       formData.append("file", state.file);
-      formData.append("doc_no", state.docNo);
+      // formData.append("doc_no", state.docNo);
+
+      const token = localStorage.getItem("access_token");
+      if (!token) throw new Error("Not logged in");
 
       const uploadRes = await fetch("http://localhost:8000/upload", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
       const uploadData = await uploadRes.json();
 
+      if (!uploadRes.ok) {
+        throw new Error(uploadData.detail || "Upload failed");
+      }
+
       const genRes = await fetch(
         `http://localhost:8000/generate/${uploadData.file_id}`,
-        { method: "POST" }
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       const data = await genRes.json();
+
+      if (!genRes.ok) {
+        throw new Error(data.detail || "Generate failed");
+      }
 
       setState((prev) => ({
         ...prev,
@@ -94,41 +114,49 @@ export const useOfferLetter = () => {
         error: err.message || "Something went wrong",
       }));
     }
-  }, [state.file, state.docNo]);
+  }, [state.file]);
 
   const generateFromForm = useCallback(async (formData: any) => {
-  setState((prev) => ({
-    ...prev,
-    status: "loading",
-    error: null,
-  }));
-
-  try {
-    const res = await fetch("http://localhost:8000/generate-from-form", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
     setState((prev) => ({
       ...prev,
-      status: "success",
-      files: data.results,
+      status: "loading",
+      error: null,
     }));
 
-    return data.results;
-  } catch (err: any) {
-    setState((prev) => ({
-      ...prev,
-      status: "error",
-      error: err.message || "Something went wrong",
-    }));
-  }
-}, []);
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) throw new Error("Not logged in");
+
+      const res = await fetch("http://localhost:8000/generate-from-form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Generate from form failed");
+      }
+
+      setState((prev) => ({
+        ...prev,
+        status: "success",
+        files: data.results,
+      }));
+
+      return data.results;
+    } catch (err: any) {
+      setState((prev) => ({
+        ...prev,
+        status: "error",
+        error: err.message || "Something went wrong",
+      }));
+    }
+  }, []);
 
   return {
     ...state,

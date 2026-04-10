@@ -67,3 +67,57 @@
 .results-item span {
   font-weight: 500;
 }
+.download-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0px 6px 14px rgba(37, 99, 235, 0.25);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover Animation */
+.download-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0px 10px 18px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+}
+
+/* Click Effect */
+.download-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0px 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* Shine Animation */
+.download-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  transform: skewX(-25deg);
+  transition: left 0.5s ease-in-out;
+}
+
+.download-btn:hover::before {
+  left: 120%;
+}
+
+/* Disabled State */
+.download-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}

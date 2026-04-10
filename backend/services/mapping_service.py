@@ -12,6 +12,7 @@ BONUS_FIELDS = [
     "Revised_CTC",
 ]
 
+
 def map_record(record: dict):
     mapped = {}
 
@@ -22,6 +23,12 @@ def map_record(record: dict):
     for template_key, excel_key in FIELD_MAPPING.items():
         key = excel_key.strip().lower()
         raw_value = normalized_record.get(key, None)
+
+        # ==============================
+        # Fix Excel date string format
+        # ==============================
+        if isinstance(raw_value, str) and "00:00:00" in raw_value:
+            raw_value = raw_value.split(" ")[0]
 
         # ==============================
         # Date formatting
@@ -111,7 +118,7 @@ def map_record(record: dict):
             except:
                 raw_value = str(raw_value)
 
-        mapped[template_key] = str(raw_value).strip() if raw_value else ""
+        mapped[template_key] = str(raw_value).strip() if raw_value else " "
  
     # =========================================================
     # MULTIPLE RETENTION BONUS (WORKS FOR EXCEL + FORM)

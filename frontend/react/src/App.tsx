@@ -1,21 +1,71 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
 import Selection from "./pages/Selection";
 import Home from "./pages/Home";
 import Results from "./features/offer-letter/components/Results";
 import FormPage from "./pages/FormPage";
 import Navbar from "./pages/Navbar";
 
+import LoginPage from "./features/auth/pages/LoginPage";
+import ProtectedRoute from "./features/auth/ProtectedRoute";
+
 function App() {
   return (
-    <BrowserRouter>
-    <Navbar/>
+    <>
       <Routes>
-        <Route path="/" element={<Selection />} />
-        <Route path="/form" element={<FormPage />} />
-        <Route path="/excel" element={<Home />} />
-        <Route path="/results" element={<Results />} />
+        {/* Public Route */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <Selection />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/form"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <FormPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/excel"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <Home />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/results"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <Results />
+              </>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 
