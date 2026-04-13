@@ -8,6 +8,7 @@ import Navbar from "./pages/Navbar";
 
 import LoginPage from "./features/auth/pages/LoginPage";
 import ProtectedRoute from "./features/auth/ProtectedRoute";
+import MyOfferLetters from "./pages/MyOfferLetters";
 
 function App() {
   return (
@@ -54,6 +55,17 @@ function App() {
         />
 
         <Route
+          path="/my-offerletters"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <MyOfferLetters />
+              </>
+            </ProtectedRoute>
+          }
+        />
+         <Route
           path="/results"
           element={
             <ProtectedRoute>
@@ -64,6 +76,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </>
   );

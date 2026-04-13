@@ -71,7 +71,6 @@ const FormPage: React.FC = () => {
     const textFields = [
       "candidate_name",
       "joining_location",
-      "proposed_designation",
       "reporting_manager",
       "relocation_from",
       "relocation_to",
@@ -267,7 +266,6 @@ const FormPage: React.FC = () => {
           {/* Designation */}
           <input
             name="proposed_designation"
-            value={formData.proposed_designation}
             placeholder="Proposed Designation"
             onChange={handleChange}
             className={`input ${errors.proposed_designation ? "error" : ""}`}
@@ -298,7 +296,7 @@ const FormPage: React.FC = () => {
           {activeFields.map((field) => (
             <div key={field.key} className="field-block">
 
-              <label>{field.label}</label>
+              {/* <label>{field.label}</label> */}
 
               <input
                 name={field.key}

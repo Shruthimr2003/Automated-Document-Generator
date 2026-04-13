@@ -3,7 +3,7 @@
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #4f46e5;
+  background:  #04685f;
   color: white;
   cursor: pointer;
   transition: 0.25s ease;
@@ -11,10 +11,10 @@
 }
 
 .generate-btn:hover {
-  opacity: 0.9;
+  opacity: 0.6;
 }
 
 .generate-btn:disabled {
-  background: #c7d2fe;
+  background: #2bac9f;
   cursor: not-allowed;
 }

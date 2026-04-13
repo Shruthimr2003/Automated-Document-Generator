@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
 from config.database import Base
+from sqlalchemy.orm import relationship
+
+
 
 
 class User(Base):
@@ -15,5 +18,7 @@ class User(Base):
 
     role = Column(String(50), default="user")  # user/admin
     is_active = Column(Boolean, default=True)
+    
+    offer_letters = relationship("OfferLetter", back_populates="user")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

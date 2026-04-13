@@ -15,11 +15,18 @@ const Navbar: React.FC = () => {
   return (
     <div className="navbar">
       <div className="nav-left">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpFWU9q3tLqaeQFb7msaTeRzww-PdoAVAlCg&s"
-          alt="Mirafra Logo"
-          className="logo"
-        />
+        <a
+          href="https://www.mirafra.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpFWU9q3tLqaeQFb7msaTeRzww-PdoAVAlCg&s"
+            alt="Mirafra Logo"
+            className="logo"
+            style={{ cursor: "pointer" }}
+          />
+        </a>
       </div>
 
       <div className="nav-center">
@@ -29,7 +36,15 @@ const Navbar: React.FC = () => {
       <div className="nav-right">
         {user && (
           <>
+            <span
+              className="nav-link"
+              onClick={() => navigate("/my-offerletters")}
+            >
+              Offer Letters
+            </span>
+
             <span className="username">{user.username}</span>
+
             <button className="logout-btn" onClick={handleLogout}>
               Logout
             </button>

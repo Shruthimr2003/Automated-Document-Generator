@@ -83,12 +83,12 @@
   border: none;
   cursor: pointer;
 
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  background: linear-gradient(135deg, #0d9484, #04685f);
   color: white;
-  font-weight: 500;
+  font-weight: 600;
 
   transition: all 0.25s ease;
-  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 6px 18px rgba(20, 184, 166, 0.30);
   position: relative;
   overflow: hidden;
 }
@@ -112,13 +112,13 @@
 
 .button-container button:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 10px 25px rgba(20, 184, 166, 0.4);
 }
 
 /* Click */
 .button-container button:active {
   transform: scale(0.96);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
 }
 
 /* Responsive */

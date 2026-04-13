@@ -115,6 +115,7 @@
 #         filename=filename,
 #         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 #     )
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -125,6 +126,8 @@ from routers.generator_router import router as generator_router
 
 from models.user_model import User
 from models.token_model import RefreshToken
+
+from models.offerletter_model import OfferLetter
 
 Base.metadata.create_all(bind=engine)
 
