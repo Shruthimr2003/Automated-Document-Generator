@@ -9,10 +9,27 @@ import Navbar from "./pages/Navbar";
 import LoginPage from "./features/auth/pages/LoginPage";
 import ProtectedRoute from "./features/auth/ProtectedRoute";
 import MyOfferLetters from "./pages/MyOfferLetters";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 function App() {
+  useEffect(() => {
+    const handler = () => {
+      toast.warning("Session expired. Please login again.", {
+        toastId: "session-expired",
+      });
+    };
+
+    window.addEventListener("session-expired", handler);
+
+    return () => {
+      window.removeEventListener("session-expired", handler);
+    };
+  }, []);
+
   return (
     <>
+
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<LoginPage />} />
@@ -65,7 +82,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/results"
           element={
             <ProtectedRoute>

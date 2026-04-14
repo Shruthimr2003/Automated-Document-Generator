@@ -159,8 +159,6 @@ const FormPage: React.FC = () => {
       ),
     };
 
-    console.log("🚀 FORM DATA:", cleanedData); // debug
-
     const result = await generateFromForm(cleanedData);
 
     if (result?.length) {

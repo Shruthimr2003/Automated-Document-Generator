@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { type OfferLetterState } from "../types/offerLetter.types";
+import { uploadExcel, generateLetters, generateFromFormApi } from "../../../api/offerLetter";
 
 const initialState: OfferLetterState = {
   file: null,
@@ -39,7 +40,6 @@ export const useOfferLetter = () => {
   }, []);
 
   const generateOfferLetters = useCallback(async () => {
-
     if (!state.file) {
       setState((prev) => ({
         ...prev,
@@ -48,14 +48,6 @@ export const useOfferLetter = () => {
       return;
     }
 
-    // if (!state.docNo.trim()) {
-    //   setState((prev) => ({
-    //     ...prev,
-    //     error: "Please enter Document Number",
-    //   }));
-    //   return;
-    // }
-
     setState((prev) => ({
       ...prev,
       status: "loading",
@@ -63,42 +55,11 @@ export const useOfferLetter = () => {
     }));
 
     try {
-      const formData = new FormData();
-      formData.append("file", state.file);
-      // formData.append("doc_no", state.docNo);
+      // Upload Excel
+      const uploadData = await uploadExcel(state.file);
 
-      const token = localStorage.getItem("access_token");
-      if (!token) throw new Error("Not logged in");
-
-      const uploadRes = await fetch("http://localhost:8000/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      const uploadData = await uploadRes.json();
-
-      if (!uploadRes.ok) {
-        throw new Error(uploadData.detail || "Upload failed");
-      }
-
-      const genRes = await fetch(
-        `http://localhost:8000/generate/${uploadData.file_id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await genRes.json();
-
-      if (!genRes.ok) {
-        throw new Error(data.detail || "Generate failed");
-      }
+      // Generate offer letters
+      const data = await generateLetters(uploadData.file_id);
 
       setState((prev) => ({
         ...prev,
@@ -124,23 +85,7 @@ export const useOfferLetter = () => {
     }));
 
     try {
-      const token = localStorage.getItem("access_token");
-      if (!token) throw new Error("Not logged in");
-
-      const res = await fetch("http://localhost:8000/generate-from-form", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.detail || "Generate from form failed");
-      }
+      const data = await generateFromFormApi(formData);
 
       setState((prev) => ({
         ...prev,
@@ -163,6 +108,6 @@ export const useOfferLetter = () => {
     setFile,
     setDocNo,
     generateOfferLetters,
-    generateFromForm
+    generateFromForm,
   };
 };

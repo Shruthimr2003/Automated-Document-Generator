@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../features/offer-letter/styles/Results.css"
-import { toast } from "react-toastify"
+import "../features/offer-letter/styles/Results.css";
+import { toast } from "react-toastify";
+import { authFetch } from "../api/authFetch";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
@@ -18,79 +19,40 @@ const MyOfferLetters: React.FC = () => {
 
   const navigate = useNavigate();
 
-useEffect(() => {
+  useEffect(() => {
     const fetchLetters = async () => {
       try {
-        const token = localStorage.getItem("access_token");
-
-        if (!token) {
-          toast.warning("Session expired. Please login again.");
-          navigate("/login");
-          return;
-        }
-
-        const res = await fetch(`${API_URL}/my-offerletters`, {
+        const res = await authFetch(`${API_URL}/my-offerletters`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         });
 
-        if (res.status === 401) {
-          toast.warning("Session expired. Please login again.");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
-          navigate("/login");
-          return;
-        }
-
         if (!res.ok) {
-          toast.error("Unable to load offer letters. Please try again.");
-          setFiles([]);
+          const errData = await res.json();
+          toast.error(errData.detail || "Unable to load offer letters");
           return;
         }
 
         const data = await res.json();
-
-        if (!data || data.length === 0) {
-          setFiles([]);
-        } else {
-          setFiles(data);
+        setFiles(data || []);
+      } catch (err: any) {
+        if (err.message === "Session expired") {
+          return; 
         }
-      } catch (err) {
-        console.error(err);
-        toast.error("Something went wrong. Please try again.");
-        setFiles([]);
+        toast.error(err.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
     };
 
     fetchLetters();
-  }, [navigate]);
+  }, []);
 
   const handleDownload = async (offerId: number, filename: string) => {
     try {
-      const token = localStorage.getItem("access_token");
-
-      if (!token) {
-        toast.warning("Session expired. Please login again.");
-        navigate("/login");
-        return;
-      }
-
-      const res = await fetch(`${API_URL}/download/${offerId}`, {
+      const res = await authFetch(`${API_URL}/download/${offerId}`, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
-      if (res.status === 401) {
-        toast.warning("Session expired. Please login again.");
-        navigate("/login");
-        return;
-      }
       if (!res.ok) {
         toast.error("Download failed. Please try again.");
         return;
@@ -110,40 +72,38 @@ useEffect(() => {
       toast.success("Download started!");
     } catch (err) {
       console.error(err);
-      toast.error("Download failed. Please try again.");
     }
   };
 
-
   if (loading) {
-  return (
-    <div className="full-container">
-      <div className="loader-container">
-        <div className="loader-box">
-          <div className="spinner"></div>
-          <p>Loading your offer letters...</p>
+    return (
+      <div className="full-container">
+        <div className="loader-container">
+          <div className="loader-box">
+            <div className="spinner"></div>
+            <p>Loading your offer letters...</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
- if (!files.length) {
-  return (
-    <div className="full-container">
-      <div className="empty-container">
-        <div className="empty-box">
-          <h3>No Offer Letters Found</h3>
-          <p>You have not generated any offer letters yet.</p>
+  if (!files.length) {
+    return (
+      <div className="full-container">
+        <div className="empty-container">
+          <div className="empty-box">
+            <h3>No Offer Letters Found</h3>
+            <p>You have not generated any offer letters yet.</p>
 
-          <button className="button" onClick={() => navigate("/")}>
-            Generate Offer Letter
-          </button>
+            <button className="button" onClick={() => navigate("/")}>
+              Generate Offer Letter
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   return (
     <div className="full-container">

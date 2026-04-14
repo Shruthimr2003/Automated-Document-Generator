@@ -28,9 +28,10 @@ export const loginApi = async (payload: LoginPayload) => {
 };
 
 export const refreshApi = async (refreshToken: string) => {
-  const res = await axios.post<TokenResponse>(
-    `${API_URL}/auth/refresh?refresh_token=${refreshToken}`
-  );
+  const res = await axios.post<TokenResponse>(`${API_URL}/auth/refresh`, {
+    refresh_token: refreshToken,
+  });
+
   return res.data;
 };
 

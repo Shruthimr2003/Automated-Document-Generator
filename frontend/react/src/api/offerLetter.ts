@@ -1,100 +1,68 @@
-// const BASE_URL = "http://localhost:8000";
 
-// export const uploadExcel = async (file: File,
-//   salaryFile: File,
-//   docNo:string
-// ) => {
-//   const formData = new FormData();
-//   formData.append("file", file);
-//   formData.append("salary_file",salaryFile)
-//   formData.append("doc_no",docNo)
-
-//   const res = await fetch(`${BASE_URL}/upload`, {
-//     method: "POST",
-//     body: formData,
-//   });
-
-//   if (!res.ok) {
-//     throw new Error("Upload failed");
-//   }
-
-//   return res.json(); 
-// };
-
-// export const generateLetters = async (fileId: string) => {
-//   const res = await fetch(`${BASE_URL}/generate/${fileId}`, {
-//     method: "POST",
-//   });
-
-//   if (!res.ok) {
-//     throw new Error("Generation failed");
-//   }
-
-//   return res.json(); 
-// };
+import { authFetch } from "./authFetch";
 
 const BASE_URL = "http://localhost:8000";
 
-export const uploadExcel = async (file: File, salaryFile: File, docNo: string) => {
-  const token = localStorage.getItem("access_token");
-
-  if (!token) throw new Error("Not logged in");
-
+export const uploadExcel = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("salary_file", salaryFile);
-  formData.append("doc_no", docNo);
 
-  const res = await fetch(`${BASE_URL}/upload`, {
+  const res = await authFetch(`${BASE_URL}/upload`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     body: formData,
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error("Upload failed");
+    throw new Error(data.detail || "Upload failed");
   }
 
-  return res.json();
+  return data;
 };
 
 export const generateLetters = async (fileId: string) => {
-  const token = localStorage.getItem("access_token");
-
-  if (!token) throw new Error("Not logged in");
-
-  const res = await fetch(`${BASE_URL}/generate/${fileId}`, {
+  const res = await authFetch(`${BASE_URL}/generate/${fileId}`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.detail || "Generation failed");
+    throw new Error(data.detail || "Generation failed");
   }
 
-  return res.json();
+  return data;
 };
 
 export const getMyOfferLetters = async () => {
-  const token = localStorage.getItem("access_token");
-
-  if (!token) throw new Error("Not logged in");
-
-  const res = await fetch(`${BASE_URL}/my-offerletters`, {
+  const res = await authFetch(`${BASE_URL}/my-offerletters`, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error("Failed to fetch offer letters");
+    throw new Error(data.detail || "Failed to fetch offer letters");
   }
 
-  return res.json();
+  return data;
+};
+
+export const generateFromFormApi = async (formData: any) => {
+  const res = await authFetch(`${BASE_URL}/generate-from-form`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.detail || "Generate from form failed");
+  }
+
+  return data;
 };

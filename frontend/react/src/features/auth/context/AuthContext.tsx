@@ -1,5 +1,11 @@
 import React, { createContext, useEffect, useState } from "react";
-import { getMeApi, loginApi, logoutApi, refreshApi, type UserResponse } from "../../../api/auth";
+import {
+    getMeApi,
+    loginApi,
+    logoutApi,
+    refreshApi,
+    type UserResponse,
+} from "../../../api/auth";
 
 type AuthContextType = {
     user: UserResponse | null;
@@ -12,9 +18,10 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [user, setUser] = useState<UserResponse | null>(null);
-
 
     const [accessToken, setAccessToken] = useState<string | null>(
         localStorage.getItem("access_token")
@@ -41,10 +48,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem("refresh_token");
     };
 
+    // ===============================
+    // LOGIN
+    // ===============================
     const login = async (username: string, password: string) => {
         setLoading(true);
+
         try {
             const tokens = await loginApi({ username, password });
+
             saveTokens(tokens.access_token, tokens.refresh_token);
 
             const profile = await getMeApi(tokens.access_token);
@@ -54,6 +66,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    // ===============================
+    // LOGOUT
+    // ===============================
     const logout = async () => {
         try {
             if (refreshToken) {
@@ -66,26 +81,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    // Auto load session on refresh
+    // ===============================
+    // AUTO LOAD SESSION ON PAGE REFRESH
+    // ===============================
     useEffect(() => {
         const init = async () => {
             try {
-                if (!accessToken || !refreshToken) {
+                const storedAccess = localStorage.getItem("access_token");
+                const storedRefresh = localStorage.getItem("refresh_token");
+
+                if (!storedAccess || !storedRefresh) {
                     setLoading(false);
                     return;
                 }
 
+                setAccessToken(storedAccess);
+                setRefreshToken(storedRefresh);
+
                 try {
-                    const profile = await getMeApi(accessToken);
+                    const profile = await getMeApi(storedAccess);
                     setUser(profile);
-                } catch {
-                    const newTokens = await refreshApi(refreshToken);
+                } catch (err) {
+                    // Access expired -> refresh
+                    const newTokens = await refreshApi(storedRefresh);
+
                     saveTokens(newTokens.access_token, newTokens.refresh_token);
 
                     const profile = await getMeApi(newTokens.access_token);
                     setUser(profile);
                 }
-            } catch {
+            }
+            catch (err) {
                 clearTokens();
             } finally {
                 setLoading(false);
@@ -96,7 +122,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, accessToken, refreshToken, login, logout, loading }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                accessToken,
+                refreshToken,
+                login,
+                logout,
+                loading,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

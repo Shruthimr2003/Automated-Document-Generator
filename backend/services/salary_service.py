@@ -33,11 +33,11 @@ def calculate_salary(ctc):
     gratuity = round((basic / 12) * 15 / 26)
 
     # Annual Gross
-    annual_gross = ctc - (17000 + employer_pf + gratuity)
+    annual_gross = ctc - (insurance + term_insurance + employer_pf + gratuity)
 
     # Special Allowance
     special_allowance = annual_gross - (
-        basic + hra + 104000 + employee_pf
+        basic + hra + lta + mobile + broadband + book + gym + employee_pf
     )
 
     def monthly(x):

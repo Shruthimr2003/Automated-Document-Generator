@@ -11,12 +11,9 @@ import NavigateToSelection from "../features/offer-letter/components/NavigateToS
 const Home: React.FC = () => {
   const {
     file,
-    docNo,
     status,
     setFile,
     error,
-    // setSalaryFile,
-    setDocNo,
     generateOfferLetters,
   } = useOfferLetter();
 
@@ -33,9 +30,9 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-wrapper">
-   
+
       <div className="home-container">
-           <NavigateToSelection/>
+        <NavigateToSelection />
         <div className="section">
           <FileUpload
             label="Candidate Details"
@@ -43,21 +40,6 @@ const Home: React.FC = () => {
             loading={isLoading}
           />
         </div>
-
-        {/* <div className="section">
-          <FileUpload label="Salary Details" onFileSelect={setSalaryFile} loading={isLoading} />
-        </div> */}
-
-        {/* <div className="section">
-          <label className="file-label ">Document Number</label>
-          <input
-            type="text"
-            value={docNo}
-            onChange={(e) => setDocNo(e.target.value)}
-            placeholder="e.g. 1232"
-            className="text-input"
-          />
-        </div> */}
 
         <div className="section">
           <GenerateButton
